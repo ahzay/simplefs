@@ -19,6 +19,7 @@ identified by invoking the lookup handler of the parent inode.
 * Regular files: create, remove, read/write (through page cache), rename;
 * Hard/Symbolic links (also symlink or soft link): create, remove, rename;
 * No extended attribute support
+* User-space notifications for read/write operations with monitor helper script (see `script/monitor`)
 
 ## Prerequisites
 
