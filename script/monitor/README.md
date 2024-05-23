@@ -4,7 +4,7 @@ This project provides a Python script to monitor read and write operations on fi
 
 ## Prerequisites
 
-Ensure you have Python 3 installed on your system. Ensure the instructions for mounting the block device with the filesystem in the `Build and Run` section in the main `README.md` has been followed.
+Ensure you have Python 3 installed on your system along with virtualenv. Ensure the instructions for mounting the block device with the filesystem in the `Build and Run` section in the main `README.md` has been followed.
 
 ## Setup
 
