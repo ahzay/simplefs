@@ -8,6 +8,8 @@
 
 #include "bitmap.h"
 #include "simplefs.h"
+/* inotify */
+#include <linux/fsnotify.h>
 
 /* Associate the provided 'buffer_head' parameter with the iblock-th block of
  * the file denoted by inode. Should the specified block be unallocated and the
@@ -256,10 +258,39 @@ const struct address_space_operations simplefs_aops = {
     .write_end = simplefs_write_end,
 };
 
+/* inotify */
+static ssize_t simplefs_inotify_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+{
+    ssize_t ret;
+
+    ret = generic_file_read_iter(iocb, to);
+    if (ret > 0) {
+        struct file *file = iocb->ki_filp;
+        SIMPLEFS_INODE_NOTIFY(file->f_inode, FS_ACCESS);
+        printk(KERN_INFO "simplefs: Read operation on file: %s\n", file->f_path.dentry->d_name.name);
+    }
+
+    return ret;
+}
+
+static ssize_t simplefs_inotify_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+{
+    ssize_t ret;
+
+    ret = generic_file_write_iter(iocb, from);
+    if (ret > 0) {
+        struct file *file = iocb->ki_filp;
+        SIMPLEFS_INODE_NOTIFY(file->f_inode, FS_MODIFY);
+        printk(KERN_INFO "simplefs: Write operation on file: %s\n", file->f_path.dentry->d_name.name);
+    }
+
+    return ret;
+}
+
 const struct file_operations simplefs_file_ops = {
     .llseek = generic_file_llseek,
     .owner = THIS_MODULE,
-    .read_iter = generic_file_read_iter,
-    .write_iter = generic_file_write_iter,
+    .read_iter = simplefs_inotify_file_read_iter,
+    .write_iter = simplefs_inotify_file_write_iter,
     .fsync = generic_file_fsync,
 };

@@ -137,6 +137,8 @@ extern uint32_t simplefs_ext_search(struct simplefs_file_ei_block *index,
 
 /* Getters for superblock and inode */
 #define SIMPLEFS_SB(sb) (sb->s_fs_info)
+/* inotify */
+#define SIMPLEFS_INODE_NOTIFY(inode, mask) fsnotify_inode(inode, mask)
 /* Extract a simplefs_inode_info object from a VFS inode */
 #define SIMPLEFS_INODE(inode) \
     (container_of(inode, struct simplefs_inode_info, vfs_inode))
